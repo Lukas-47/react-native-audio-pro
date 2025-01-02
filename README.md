@@ -11,6 +11,7 @@ Play audio files from remote URLs on Android and iOS. Designed for audiobook and
 - **🔒 Lock Screen Controls**: Play, pause, seek, or skip right from your lock screen or notification center.
 - **📢 Event Updates**: Stay in the loop with playback status updates using event listeners.
 - **⏩ Seek Anywhere**: Jump to any part of the track with easy seek options.
+- **👀 Focused**: Simple single remote file audio playback. No queues, no live streams, no web support, just one job and laser focused on it.
 - **💻 TypeScript Friendly**: Fully typed with enums and interfaces to make coding a breeze.
 
 ---
@@ -177,64 +178,16 @@ const App = () => {
 
 ### Methods
 
-#### play
-
-`play(url: string, headers?: Headers): Promise<void>`
-
-Starts streaming the audio from the provided URL.
-
-- **url**: The URL of the audio file (must be HTTPS).
-- **headers**: Optional HTTP headers for authenticated streams.
-
-#### pause
-
-`pause(): Promise<void>`
-
-Pauses the audio playback.
-
-#### resume
-
-`resume(): Promise<void>`
-
-Resumes the audio playback.
-
-#### stop
-
-`stop(): Promise<void>`
-
-Stops the audio playback and releases resources.
-
-#### seekTo
-
-`seekTo(seconds: number): Promise<void>`
-
-Seeks to a specific time in the audio track.
-
-- **seconds**: The position in seconds to seek to.
-
-#### seekBy
-
-`seekBy(seconds: number): Promise<void>`
-
-Seeks forward or backward by a specific amount of time.
-
-- **seconds**: The number of seconds to seek by (negative values seek backward).
-
-#### addEventListener
-
-`addEventListener(eventName: EventNames, listener: (...args: any[]) => void): void`
-
-Adds an event listener for playback events.
-
-- **eventName**: The event to listen for (use `EventNames` enum).
-- **listener**: The callback function to handle the event.
-
-#### removeEventListener
-
-`removeEventListener(eventName: EventNames, listener: (...args: any[]) => void): void`
-
-Removes a previously added event listener.
-
+| Method | Description | Parameters |
+|--------|-------------|------------|
+| `play(url: string, headers?: Headers): Promise<void>` | Starts streaming the audio from the provided URL. | **url**: The URL of the audio file (must be HTTPS). **headers**: Optional HTTP headers for authenticated streams. |
+| `pause(): Promise<void>` | Pauses the audio playback. | None |
+| `resume(): Promise<void>` | Resumes the audio playback. | None |
+| `stop(): Promise<void>` | Stops the audio playback and releases resources. | None |
+| `seekTo(seconds: number): Promise<void>` | Seeks to a specific time in the audio track. | **seconds**: The position in seconds to seek to. |
+| `seekBy(seconds: number): Promise<void>` | Seeks forward or backward by a specific amount of time. | **seconds**: The number of seconds to seek by (negative values seek backward). |
+| `addEventListener(eventName: EventNames, listener: (...args: any[]) => void): void` | Adds an event listener for playback events. | **eventName**: The event to listen for (use `EventNames` enum). **listener**: The callback function to handle the event. |
+| `removeEventListener(eventName: EventNames, listener: (...args: any[]) => void): void` | Removes a previously added event listener. | **eventName**: The event to stop listening for. **listener**: The previously added callback function. |
 ---
 
 ### Events
@@ -259,10 +212,6 @@ Use the `EventNames` enum to subscribe to the following events:
 - **Playback Doesn't Start**: Check that the audio URL is correct and uses HTTPS. Also, ensure that the required permissions and capabilities are set up.
 - **Events Not Emitting**: Verify that event listeners are properly added and that the event names match the `EventNames` enum.
 - **App Crashes on Android**: Ensure that the `minSdkVersion` is set to 33 or higher and that all dependencies are correctly installed.
-
----
-
-**Note**: This library focuses on playing a single audio track at a time and does not support playlist management or queue functionality. Handle this yourself according to your app's functionality and use case.
 
 ---
 
