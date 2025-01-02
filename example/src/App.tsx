@@ -1,45 +1,20 @@
-import React, { useEffect } from 'react';
-import { View, Button } from 'react-native';
-import AudioPro, { EventNames } from 'react-native-audio-pro';
+import { Text, View, StyleSheet } from 'react-native';
+import { multiply } from 'react-native-audio-pro';
 
-const App: React.FC = () => {
-  useEffect(() => {
-    const onPlay = () => {
-      console.log('Playback started');
-    };
+const result = multiply(3, 7);
 
-    const onPause = () => {
-      console.log('Playback paused');
-    };
-
-    const onPlayListener = AudioPro.addEventListener(
-      EventNames.ON_PLAY,
-      onPlay
-    );
-    const onPauseListener = AudioPro.addEventListener(
-      EventNames.ON_PAUSE,
-      onPause
-    );
-
-    return () => {
-      onPlayListener.remove();
-      onPauseListener.remove();
-    };
-  }, []);
-
-  const handlePlay = async () => {
-    try {
-      await AudioPro.play('https://example.com/audio.mp3');
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
+export default function App() {
   return (
-    <View>
-      <Button title="Play Audio" onPress={handlePlay} />
+    <View style={styles.container}>
+      <Text>Result: {result}</Text>
     </View>
   );
-};
+}
 
-export default App;
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+});
