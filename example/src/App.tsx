@@ -1,32 +1,46 @@
 import { useEffect } from 'react';
-import { View, Button, StyleSheet, Image, SafeAreaView } from 'react-native';
 import {
-  load,
-  play,
-  pause,
-  stop,
+  Alert,
+  Button,
+  Image,
+  SafeAreaView,
+  StyleSheet,
+  View,
+} from 'react-native';
+import {
   addEventListener,
   AudioProEvent,
   type AudioProMediaFile,
+  load,
+  pause,
+  play,
+  stop,
 } from 'react-native-audio-pro';
 
 const App = () => {
   useEffect(() => {
-    const onBuffering = addEventListener(AudioProEvent.BUFFERING, () =>
-      console.log('Buffering...')
-    );
-    const onPlaying = addEventListener(AudioProEvent.PLAYING, (payload) =>
-      console.log('Playing:', payload)
-    );
-    const onPaused = addEventListener(AudioProEvent.PAUSED, (payload) =>
-      console.log('Paused:', payload)
-    );
-    const onFinished = addEventListener(AudioProEvent.FINISHED, () =>
-      console.log('Finished playback')
-    );
-    const onError = addEventListener(AudioProEvent.ERROR, (error) =>
-      console.log('Error:', error)
-    );
+    const onBuffering = addEventListener(AudioProEvent.BUFFERING, () => {
+      console.log('Buffering...');
+      Alert.alert('Buffering');
+    });
+    const onPlaying = addEventListener(AudioProEvent.PLAYING, (payload) => {
+      console.log('Playing:', payload);
+      Alert.alert('Playing');
+    });
+    const onPaused = addEventListener(AudioProEvent.PAUSED, (payload) => {
+      console.log('Paused:', payload);
+      Alert.alert('Paused');
+    });
+    const onFinished = addEventListener(AudioProEvent.FINISHED, () => {
+      console.log('Finished playback');
+      Alert.alert('Finished');
+    });
+    const onError = addEventListener(AudioProEvent.ERROR, (error) => {
+      console.log('Error:', error);
+      Alert.alert('Error');
+    });
+
+    console.log('~~~ onPaused', onPaused);
 
     return () => {
       onBuffering.remove();
@@ -34,6 +48,7 @@ const App = () => {
       onPaused.remove();
       onFinished.remove();
       onError.remove();
+      console.log('~~~ removing');
     };
   }, []);
 

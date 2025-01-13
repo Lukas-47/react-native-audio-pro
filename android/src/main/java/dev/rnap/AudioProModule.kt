@@ -14,6 +14,14 @@ class AudioProModule(reactContext: ReactApplicationContext) : NativeModule {
     private val reactContext: ReactApplicationContext = reactContext
     private var isLoaded: Boolean = false
 
+    enum class AudioProEvent(val eventName: String) {
+        BUFFERING("BUFFERING"),
+        PLAYING("PLAYING"),
+        PAUSED("PAUSED"),
+        FINISHED("FINISHED"),
+        ERROR("ERROR");
+    }
+
     override fun getName(): String {
         return NAME
     }
@@ -27,10 +35,15 @@ class AudioProModule(reactContext: ReactApplicationContext) : NativeModule {
         // Add any cleanup code here, if needed
     }
 
-    private fun sendEvent(eventName: String, params: WritableMap?) {
-        reactContext
-            .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter::class.java)
-            .emit(eventName, params)
+    private fun sendEvent(event: AudioProEvent, params: WritableMap?) {
+        if (reactContext.hasActiveCatalystInstance()) {
+            Log.d("AudioPro", "Sending event: ${event.eventName}")
+            reactContext
+                .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter::class.java)
+                ?.emit(event.eventName, params)
+        } else {
+            Log.w("AudioPro", "React context is not active. Event ${event.eventName} not sent.")
+        }
     }
 
     @ReactMethod
@@ -50,7 +63,7 @@ class AudioProModule(reactContext: ReactApplicationContext) : NativeModule {
         val params = Arguments.createMap().apply {
             putString("message", "Loading audio")
         }
-        sendEvent("BUFFERING", params)
+        sendEvent(AudioProEvent.BUFFERING, params)
         promise.resolve(true)
     }
 
@@ -65,7 +78,7 @@ class AudioProModule(reactContext: ReactApplicationContext) : NativeModule {
         val params = Arguments.createMap().apply {
             putString("message", "Playing audio")
         }
-        sendEvent("PLAYING", params)
+        sendEvent(AudioProEvent.PLAYING, params)
         promise.resolve(true)
     }
 
@@ -80,7 +93,7 @@ class AudioProModule(reactContext: ReactApplicationContext) : NativeModule {
         val params = Arguments.createMap().apply {
             putString("message", "Pausing audio")
         }
-        sendEvent("PAUSED", params)
+        sendEvent(AudioProEvent.PAUSED, params)
         promise.resolve(true)
     }
 
@@ -96,7 +109,7 @@ class AudioProModule(reactContext: ReactApplicationContext) : NativeModule {
         val params = Arguments.createMap().apply {
             putString("message", "Stopping and releasing resources")
         }
-        sendEvent("FINISHED", params)
+        sendEvent(AudioProEvent.FINISHED, params)
         promise.resolve(true)
     }
 }
