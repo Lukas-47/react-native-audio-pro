@@ -8,7 +8,7 @@ import {
   addEventListener,
   removeEventListener,
   AudioProEvent,
-  type AudioProLoadOptions,
+  type AudioProMediaFile,
 } from 'react-native-audio-pro';
 
 const App = () => {
@@ -38,21 +38,18 @@ const App = () => {
     };
   }, []);
 
-  const exampleLoadOptions: AudioProLoadOptions = {
+  const mediaFile: AudioProMediaFile = {
     url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
     title: 'SoundHelix Song 1',
     artist: 'SoundHelix',
-    artwork: 'https://via.placeholder.com/150',
+    artwork: 'https://placehold.co/300',
   };
 
   return (
     <SafeAreaView style={styles.safe}>
       <View style={styles.container}>
-        <Image
-          source={{ uri: exampleLoadOptions.artwork }}
-          style={styles.artwork}
-        />
-        <Button title="Load Audio" onPress={() => load(exampleLoadOptions)} />
+        <Image source={{ uri: mediaFile.artwork }} style={styles.artwork} />
+        <Button title="Load Audio" onPress={() => load(mediaFile)} />
         <Button title="Play Audio" onPress={play} />
         <Button title="Pause Audio" onPress={pause} />
         <Button title="Stop Audio" onPress={stop} />
@@ -64,12 +61,12 @@ const App = () => {
 const styles = StyleSheet.create({
   safe: {
     flex: 1,
+    backgroundColor: '#333',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 16,
   },
   artwork: {
     width: 150,

@@ -10,7 +10,7 @@ export enum AudioProEvent {
   PROGRESS = 'PROGRESS',
 }
 
-export type AudioProLoadOptions = {
+export type AudioProMediaFile = {
   url: string;
   title: string;
   artist: string;

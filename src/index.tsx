@@ -8,6 +8,6 @@ export {
 } from './AudioPro';
 export {
   AudioProEvent,
-  type AudioProLoadOptions,
+  type AudioProMediaFile,
   AudioProErrorCode,
 } from './types';

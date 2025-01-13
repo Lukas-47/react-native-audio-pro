@@ -1,8 +1,8 @@
-import { AudioProEvent, type AudioProLoadOptions } from './types';
+import { AudioProEvent, type AudioProMediaFile } from './types';
 
 const eventListeners = new Map<AudioProEvent, Set<Function>>();
 
-export const load = async (options: AudioProLoadOptions): Promise<void> => {
+export const load = async (options: AudioProMediaFile): Promise<void> => {
   console.log('Loading audio with options:', options);
 };
 
