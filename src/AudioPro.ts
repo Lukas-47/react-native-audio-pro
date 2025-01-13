@@ -1,48 +1,34 @@
+// src/NativeAudioPro.ts
+
+import { NativeModules, NativeEventEmitter } from 'react-native';
 import { AudioProEvent, type AudioProMediaFile } from './types';
 
-const eventListeners = new Map<AudioProEvent, Set<Function>>();
+const { AudioPro } = NativeModules;
+const eventEmitter = new NativeEventEmitter(AudioPro);
 
-export const load = async (options: AudioProMediaFile): Promise<void> => {
-  console.log('Loading audio with options:', options);
+export const load = async (mediaFile: AudioProMediaFile): Promise<void> => {
+  await AudioPro.load(mediaFile);
 };
 
 export const play = async (): Promise<void> => {
-  console.log('Playing audio');
+  await AudioPro.play();
 };
 
 export const pause = async (): Promise<void> => {
-  console.log('Pausing audio');
+  await AudioPro.pause();
 };
 
 export const stop = async (): Promise<void> => {
-  console.log('Stopping and releasing resources');
+  await AudioPro.stop();
 };
 
 export const addEventListener = <E extends AudioProEvent>(
   event: E,
   callback: (payload: any) => void
-): { event: E; callback: Function } => {
-  if (!eventListeners.has(event)) {
-    eventListeners.set(event, new Set());
-  }
+): { remove: () => void } => {
+  const subscription = eventEmitter.addListener(event, callback);
 
-  const listeners = eventListeners.get(event)!;
-  listeners.add(callback);
-
-  console.log(`Added listener for event: ${event}`);
-  return { event, callback };
-};
-
-export const removeEventListener = ({
-  event,
-  callback,
-}: {
-  event: AudioProEvent;
-  callback: Function;
-}): void => {
-  const listeners = eventListeners.get(event);
-  if (listeners) {
-    listeners.delete(callback);
-    console.log(`Removed listener for event: ${event}`);
-  }
+  return {
+    remove: () => subscription.remove(),
+  };
 };

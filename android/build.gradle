@@ -49,7 +49,7 @@ def supportsNamespace() {
 
 android {
   if (supportsNamespace()) {
-    namespace "com.audiopro"
+    namespace "dev.rnap"
 
     sourceSets {
       main {
@@ -117,6 +117,6 @@ if (isNewArchitectureEnabled()) {
   react {
     jsRootDir = file("../src/")
     libraryName = "AudioPro"
-    codegenJavaPackageName = "com.audiopro"
+    codegenJavaPackageName = "dev.rnap"
   }
 }

@@ -191,7 +191,7 @@
       "android": "android/generated"
     },
     "android": {
-      "javaPackageName": "com.audiopro"
+      "javaPackageName": "dev.rnap"
     },
     "includesGeneratedCode": true
   },

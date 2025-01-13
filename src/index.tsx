@@ -1,11 +1,4 @@
-export {
-  load,
-  play,
-  pause,
-  stop,
-  addEventListener,
-  removeEventListener,
-} from './AudioPro';
+export { load, play, pause, stop, addEventListener } from './AudioPro';
 export {
   AudioProEvent,
   type AudioProMediaFile,

@@ -6,7 +6,6 @@ import {
   pause,
   stop,
   addEventListener,
-  removeEventListener,
   AudioProEvent,
   type AudioProMediaFile,
 } from 'react-native-audio-pro';
@@ -30,11 +29,11 @@ const App = () => {
     );
 
     return () => {
-      removeEventListener(onBuffering);
-      removeEventListener(onPlaying);
-      removeEventListener(onPaused);
-      removeEventListener(onFinished);
-      removeEventListener(onError);
+      onBuffering.remove();
+      onPlaying.remove();
+      onPaused.remove();
+      onFinished.remove();
+      onError.remove();
     };
   }, []);
 
