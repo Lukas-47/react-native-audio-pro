@@ -19,6 +19,9 @@ Modern, background-capable audio playback for React Native — built for podcast
 - [🚀 Installation](#-installation)
 - [⚙️ Requirements](#-requirements)
 - [🔧 Platform-Specific Setup](#-platform-specific-setup)
+  - [🍎 iOS Setup](#-ios-setup)
+  - [🤖 Android Setup](#-android-setup)
+  - [📱 Expo Setup](#-expo-setup)
 - [📚 API Overview](#api-overview)
 - [⚡️ useAudioPro Hook Example](#useaudiopro-hook-example)
 - [📦 API Usage Example](#api-usage-example)
@@ -77,6 +80,51 @@ buildscript {
     }
 }
 ```
+</details>
+
+<details>
+<summary><b>📱 Expo Setup</b></summary>
+
+This library requires native code that needs to be compiled. It can be used with Expo in the following ways:
+
+### Option 1: Expo Dev Client (Recommended)
+
+1. Install the package:
+   ```bash
+   npx expo install react-native-audio-pro
+   ```
+
+2. Create a development build:
+   ```bash
+   npx expo prebuild
+   npx expo run:ios  # or run:android
+   ```
+
+### Option 2: Expo Config Plugin (Experimental)
+
+1. Install the package:
+   ```bash
+   npx expo install react-native-audio-pro
+   ```
+
+2. Add the plugin to your app.json:
+   ```json
+   {
+     "expo": {
+       "plugins": [
+         "react-native-audio-pro"
+       ]
+     }
+   }
+   ```
+
+3. Create a development build:
+   ```bash
+   npx expo prebuild
+   npx expo run:ios  # or run:android
+   ```
+
+> **Note**: This library won't work in the Expo Go app as it requires native code compilation. You must use a development build or production build.
 </details>
 
 ## 📚 API Overview

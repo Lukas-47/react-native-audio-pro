@@ -82,6 +82,16 @@ class AudioProModule(private val reactContext: ReactApplicationContext) :
 		AudioProController.setPlaybackSpeed(speed.toFloat())
 	}
 
+	@ReactMethod
+	fun addListener(eventName: String) {
+		// Required for RN built-in event emitter compatibility
+	}
+
+	@ReactMethod
+	fun removeListeners(count: Int) {
+		// Required for RN built-in event emitter compatibility
+	}
+
 	override fun getName(): String {
 		return NAME
 	}
