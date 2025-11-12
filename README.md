@@ -236,10 +236,12 @@ Both iOS and Android support lock screen and notification controls for play/paus
 
 ```typescript
 AudioPro.configure({
-	contentType: AudioProContentType.MUSIC,
-	showNextPrevControls: true, // Hide next/previous buttons
-	showSkipControls: false, // Show skip/seek forward/back buttons (default: true)
-	skipIntervalMs: 30000, // Number of milliseconds for skip forward/back controls (default: 30000)
+        contentType: AudioProContentType.MUSIC,
+        showNextPrevControls: true, // Hide next/previous buttons
+        showSkipControls: false, // Show skip/seek forward/back buttons (default: true)
+        skipIntervalMs: 30000, // Number of milliseconds for skip forward/back controls (default: 30000)
+        notificationClickUri: 'audiopro://notification.click', // Deep link when tapping the Android notification
+        notificationClickAction: 'android.intent.action.VIEW', // Optional action override for the pending intent
 });
 ```
 
@@ -250,6 +252,10 @@ AudioPro.configure({
   If enabled, lock screen and notification controls will include skip forward/backward (seek) buttons.
 - `skipIntervalMs` — The interval (in milliseconds) used for skip forward/back controls.
   If not set, defaults to 30000 (30 seconds).
+- `notificationClickUri` — Deep link attached to Android notification clicks so your app can detect when the user taps the
+  notification. Defaults to `audiopro://notification.click`.
+- `notificationClickAction` — Optional intent action to use for Android notification clicks. Defaults to
+  `android.intent.action.VIEW` when a URI is provided.
 
 > ⚠️ **Only one set of controls can be active at a time.**
 > If both `showNextPrevControls` and `showSkipControls` are set to `true`, only Next/Prev controls will be shown (Skip controls will be ignored).
@@ -287,19 +293,23 @@ type AudioProTrack = {
 };
 
 type AudioProSetupOptions = {
-	contentType?: AudioProContentType; // MUSIC or SPEECH
-	debug?: boolean; // Verbose logging
-	debugIncludesProgress?: boolean; // Include PROGRESS events in debug logs (default: false)
-	progressIntervalMs?: number; // Frequency (in ms) for PROGRESS events (default: 1000ms)
-	showNextPrevControls?: boolean; // Show next/previous buttons (default: true)
-	showSkipControls?: boolean; // Show skip/seek forward/back buttons (default: true)
-	skipIntervalMs?: number; // Interval in milliseconds for skip forward/back controls (default: 30000)
+        contentType?: AudioProContentType; // MUSIC or SPEECH
+        debug?: boolean; // Verbose logging
+        debugIncludesProgress?: boolean; // Include PROGRESS events in debug logs (default: false)
+        progressIntervalMs?: number; // Frequency (in ms) for PROGRESS events (default: 1000ms)
+        showNextPrevControls?: boolean; // Show next/previous buttons (default: true)
+        showSkipControls?: boolean; // Show skip/seek forward/back buttons (default: true)
+        skipIntervalMs?: number; // Interval in milliseconds for skip forward/back controls (default: 30000)
+        notificationClickUri?: string; // Deep link added to Android notification taps
+        notificationClickAction?: string; // Optional intent action for Android notification taps
 };
 
 type AudioProPlayOptions = {
-	autoPlay?: boolean; // Whether to start playback immediately (default: true)
-	headers?: AudioProHeaders; // Custom HTTP headers for audio and artwork requests
-	startTimeMs?: number; // Optional position in milliseconds to start playback from, even if autoPlay is false.
+        autoPlay?: boolean; // Whether to start playback immediately (default: true)
+        headers?: AudioProHeaders; // Custom HTTP headers for audio and artwork requests
+        startTimeMs?: number; // Optional position in milliseconds to start playback from, even if autoPlay is false.
+        notificationClickUri?: string; // Override notification deep link for this play call (Android)
+        notificationClickAction?: string; // Override notification intent action for this play call (Android)
 };
 ```
 

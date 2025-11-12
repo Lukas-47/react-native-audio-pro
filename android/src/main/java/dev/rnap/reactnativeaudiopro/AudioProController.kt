@@ -56,11 +56,13 @@ object AudioProController {
 
 	private var settingDebug: Boolean = false
 	private var settingDebugIncludesProgress: Boolean = false
-	private var settingProgressIntervalMs: Long = 1000
-	var settingAudioContentType: Int = C.AUDIO_CONTENT_TYPE_MUSIC
-	var settingShowNextPrevControls: Boolean = true
-	var settingShowSkipControls: Boolean = false
-	var settingSkipIntervalMs: Long = 30000L
+        private var settingProgressIntervalMs: Long = 1000
+        var settingAudioContentType: Int = C.AUDIO_CONTENT_TYPE_MUSIC
+        var settingShowNextPrevControls: Boolean = true
+        var settingShowSkipControls: Boolean = false
+        var settingSkipIntervalMs: Long = 30000L
+        var settingNotificationClickUri: String? = null
+        var settingNotificationClickAction: String? = null
 
 	var headersAudio: Map<String, String>? = null
 	var headersArtwork: Map<String, String>? = null
@@ -149,19 +151,21 @@ object AudioProController {
 	}
 
 	// Data class to hold parsed play options
-	private data class PlaybackOptions(
-		val contentType: String,
-		val enableDebug: Boolean,
-		val includeProgressInDebug: Boolean,
-		val speed: Float,
-		val volume: Float,
-		val autoPlay: Boolean,
-		val startTimeMs: Long?,
-		val progressIntervalMs: Long,
-		val showNextPrevControls: Boolean,
-		val showSkipControls: Boolean,
-		val skipIntervalMs: Long,
-	)
+        private data class PlaybackOptions(
+                val contentType: String,
+                val enableDebug: Boolean,
+                val includeProgressInDebug: Boolean,
+                val speed: Float,
+                val volume: Float,
+                val autoPlay: Boolean,
+                val startTimeMs: Long?,
+                val progressIntervalMs: Long,
+                val showNextPrevControls: Boolean,
+                val showSkipControls: Boolean,
+                val skipIntervalMs: Long,
+                val notificationClickUri: String?,
+                val notificationClickAction: String?,
+        )
 
 	// Extracts and applies play options from JS before playback
 	// Enforces mutual exclusivity between next/prev and skip controls for session config.
@@ -185,8 +189,12 @@ object AudioProController {
 			if (options.hasKey("showNextPrevControls")) options.getBoolean("showNextPrevControls") else true
 		val showSkip =
 			if (options.hasKey("showSkipControls")) options.getBoolean("showSkipControls") else true
-		val skipIntervalMs =
-			if (options.hasKey("skipIntervalMs")) options.getDouble("skipIntervalMs").toLong() else 30000L
+                val skipIntervalMs =
+                        if (options.hasKey("skipIntervalMs")) options.getDouble("skipIntervalMs").toLong() else 30000L
+                val notificationClickUri =
+                        if (options.hasKey("notificationClickUri")) options.getString("notificationClickUri") else null
+                val notificationClickAction =
+                        if (options.hasKey("notificationClickAction")) options.getString("notificationClickAction") else null
 
 		// Warn if showNextPrevControls is changed after session initialization
 		if (::engineBrowserFuture.isInitialized && enginerBrowser != null && showControls != settingShowNextPrevControls) {
@@ -225,24 +233,28 @@ object AudioProController {
 		activePlaybackSpeed = speed
 		activeVolume = volume
 		settingProgressIntervalMs = progressInterval
-		settingShowNextPrevControls = resolvedShowNextPrev
-		settingShowSkipControls = resolvedShowSkip
-		settingSkipIntervalMs = skipIntervalMs
+                settingShowNextPrevControls = resolvedShowNextPrev
+                settingShowSkipControls = resolvedShowSkip
+                settingSkipIntervalMs = skipIntervalMs
+                settingNotificationClickUri = notificationClickUri
+                settingNotificationClickAction = notificationClickAction
 
-		return PlaybackOptions(
-			contentType,
-			enableDebug,
-			includeProgressInDebug,
-			speed,
+                return PlaybackOptions(
+                        contentType,
+                        enableDebug,
+                        includeProgressInDebug,
+                        speed,
 			volume,
 			autoPlay,
-			startTimeMs,
-			progressInterval,
-			resolvedShowNextPrev,
-			resolvedShowSkip,
-			skipIntervalMs,
-		)
-	}
+                        startTimeMs,
+                        progressInterval,
+                        resolvedShowNextPrev,
+                        resolvedShowSkip,
+                        skipIntervalMs,
+                        notificationClickUri,
+                        notificationClickAction,
+                )
+        }
 
 	/**
 	 * Prepares the player for new playback without emitting state changes or destroying the media session

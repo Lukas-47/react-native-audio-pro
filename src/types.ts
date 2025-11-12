@@ -35,6 +35,16 @@ export type AudioProConfigureOptions = {
 	showSkipControls?: boolean;
 	skipIntervalMs?: number;
 	/**
+	 * Custom URI attached to Android notification click intents. Defaults to `audiopro://notification.click`.
+	 * Provide a deep link your app can handle to detect notification taps.
+	 */
+	notificationClickUri?: string;
+	/**
+	 * Optional action used for the Android notification click intent. Defaults to `android.intent.action.VIEW` when
+	 * a custom URI is provided.
+	 */
+	notificationClickAction?: string;
+	/**
 	 * @deprecated use skipIntervalMs instead
 	 */
 	skipInterval?: number;
@@ -53,6 +63,14 @@ export type AudioProPlayOptions = {
 	autoPlay?: boolean;
 	headers?: AudioProHeaders;
 	startTimeMs?: number;
+	/**
+	 * Override the configured notification URI for this track when tapping the Android notification.
+	 */
+	notificationClickUri?: string;
+	/**
+	 * Override the configured notification intent action for this track when tapping the Android notification.
+	 */
+	notificationClickAction?: string;
 };
 
 // ==============================

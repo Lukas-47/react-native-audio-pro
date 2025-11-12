@@ -98,4 +98,8 @@ export const DEFAULT_CONFIG: AudioProConfigureOptions = {
 	showSkipControls: false,
 	/** Interval in milliseconds for skip forward/back actions */
 	skipIntervalMs: DEFAULT_SKIP_INTERVAL_MS,
+	/** Default deep link emitted when tapping the Android notification */
+	notificationClickUri: 'audiopro://notification.click',
+	/** Default action for Android notification taps */
+	notificationClickAction: 'android.intent.action.VIEW',
 };

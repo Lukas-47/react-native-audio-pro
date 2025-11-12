@@ -6,6 +6,7 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Build
 import androidx.annotation.OptIn
 import androidx.annotation.RequiresPermission
@@ -46,22 +47,39 @@ open class AudioProPlaybackService : MediaLibraryService() {
 	 *
 	 * If null is returned, [MediaSession.setSessionActivity] is not set by the service.
 	 */
-	fun getSessionActivityIntent(): PendingIntent? {
-		val launchIntent = packageManager.getLaunchIntentForPackage(packageName)?.apply {
-			action = android.content.Intent.ACTION_MAIN
-			addCategory(android.content.Intent.CATEGORY_LAUNCHER)
-			flags = android.content.Intent.FLAG_ACTIVITY_NEW_TASK or
-				android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP
-		}
-		return launchIntent?.let {
-			PendingIntent.getActivity(
-				this,
-				0,
-				it,
-				PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-			)
-		}
-	}
+        fun getSessionActivityIntent(): PendingIntent? {
+                val launchIntent = packageManager.getLaunchIntentForPackage(packageName)?.apply {
+                        val uriString = AudioProController.settingNotificationClickUri?.takeIf { it.isNotBlank() }
+                        val actionString = AudioProController.settingNotificationClickAction?.takeIf { it.isNotBlank() }
+
+                        flags =
+                                android.content.Intent.FLAG_ACTIVITY_NEW_TASK or
+                                        android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP or
+                                        android.content.Intent.FLAG_ACTIVITY_SINGLE_TOP
+
+                        if (uriString != null) {
+                                data = Uri.parse(uriString)
+                        }
+
+                        action = when {
+                                actionString != null -> actionString
+                                uriString != null -> android.content.Intent.ACTION_VIEW
+                                else -> android.content.Intent.ACTION_MAIN
+                        }
+
+                        if (action == android.content.Intent.ACTION_MAIN) {
+                                addCategory(android.content.Intent.CATEGORY_LAUNCHER)
+                        }
+                }
+                return launchIntent?.let {
+                        PendingIntent.getActivity(
+                                this,
+                                0,
+                                it,
+                                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+                        )
+                }
+        }
 
 	/**
 	 * Creates the library session callback to implement the domain logic. Can be overridden to return
