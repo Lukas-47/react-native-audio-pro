@@ -13,6 +13,7 @@ export interface UseAudioProReturn {
 	playingTrack: AudioProTrack | null;
 	playbackSpeed: number;
 	volume: number;
+	isRepeating: boolean;
 	error: AudioProPlaybackErrorPayload | null;
 }
 
@@ -23,6 +24,7 @@ const selectAll = (state: AudioProStore): UseAudioProReturn => ({
 	playingTrack: state.trackPlaying,
 	playbackSpeed: state.playbackSpeed,
 	volume: state.volume,
+	isRepeating: state.isRepeating,
 	error: state.error,
 });
 

@@ -16,6 +16,7 @@ export interface AudioProStore {
 	duration: number;
 	playbackSpeed: number;
 	volume: number;
+	isRepeating: boolean;
 	debug: boolean;
 	debugIncludesProgress: boolean;
 	trackPlaying: AudioProTrack | null;
@@ -27,6 +28,7 @@ export interface AudioProStore {
 	setConfigureOptions: (options: AudioProConfigureOptions) => void;
 	setPlaybackSpeed: (speed: number) => void;
 	setVolume: (volume: number) => void;
+	setIsRepeating: (isRepeating: boolean) => void;
 	setError: (error: AudioProPlaybackErrorPayload | null) => void;
 	updateFromEvent: (event: AudioProEvent) => void;
 }
@@ -61,6 +63,7 @@ export const internalStore = create<AudioProStore>((set, get) => ({
 	duration: 0,
 	playbackSpeed: 1.0,
 	volume: normalizeVolume(1.0),
+  isRepeating: false,
 	debug: false,
 	debugIncludesProgress: false,
 	trackPlaying: null,
@@ -72,6 +75,7 @@ export const internalStore = create<AudioProStore>((set, get) => ({
 	setConfigureOptions: (options) => set({ configureOptions: options }),
 	setPlaybackSpeed: (speed) => set({ playbackSpeed: speed }),
 	setVolume: (volume) => set({ volume: normalizeVolume(volume) }),
+  setIsRepeating: (isRepeating) => set({ isRepeating }),
 	setError: (error) => set({ error }),
 	updateFromEvent: (event) => {
 		// Early exit for simple remote commands (no state change)

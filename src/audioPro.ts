@@ -353,6 +353,20 @@ export const AudioPro = {
 		return internalStore.getState().volume;
 	},
 
+	setIsRepeating(isRepeating: boolean) {
+		logDebug('AudioPro: setIsRepeating()', isRepeating);
+		const { setIsRepeating, trackPlaying } = internalStore.getState();
+		setIsRepeating(!!isRepeating);
+		if (trackPlaying) {
+			if (!isValidPlayerStateForOperation('setIsRepeating()')) return;
+			NativeAudioPro.setIsRepeating(!!isRepeating);
+		}
+	},
+
+	getIsRepeating() {
+		return internalStore.getState().isRepeating;
+	},
+
 	/**
 	 * Get the last error that occurred
 	 *
@@ -379,8 +393,14 @@ export const AudioPro = {
 		}
 
 		logDebug('AudioPro: setProgressInterval()', clampedMs);
-		const { setConfigureOptions, configureOptions } = internalStore.getState();
+		const { setConfigureOptions, configureOptions, trackPlaying } = internalStore.getState();
 		setConfigureOptions({ ...configureOptions, progressIntervalMs: clampedMs });
+
+		// If a track is currently playing, update the native progress interval immediately
+		if (trackPlaying) {
+			if (!isValidPlayerStateForOperation('setProgressInterval()')) return;
+			NativeAudioPro.setProgressInterval(clampedMs);
+		}
 	},
 
 	/**
