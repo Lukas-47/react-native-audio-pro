@@ -446,7 +446,8 @@ export const AudioPro = {
 	getProgressUpdatesEnabled(): boolean {
 		return (
 			internalStore.getState().configureOptions.progressUpdatesEnabled ??
-			DEFAULT_CONFIG.progressUpdatesEnabled
+			DEFAULT_CONFIG.progressUpdatesEnabled ??
+			true
 		);
 	},
 
