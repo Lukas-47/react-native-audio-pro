@@ -94,6 +94,12 @@ export const AudioPro = {
 		setConfigureOptions(config);
 		setDebug(!!options.debug);
 		setDebugIncludesProgress(options.debugIncludesProgress ?? false);
+		
+		// Apply progressUpdatesEnabled to native if provided
+		if (config.progressUpdatesEnabled !== undefined) {
+			NativeAudioPro.setProgressUpdatesEnabled(config.progressUpdatesEnabled);
+		}
+		
 		logDebug('AudioPro: configure()', config);
 	},
 
@@ -379,11 +385,11 @@ export const AudioPro = {
 	/**
 	 * Set the frequency at which progress events are emitted
 	 *
-	 * @param ms - Interval in milliseconds (100ms to 10000ms)
+	 * @param ms - Interval in milliseconds (100ms to 86400000ms / 24 hours)
 	 */
 	setProgressInterval(ms: number) {
 		const MIN_INTERVAL = 100;
-		const MAX_INTERVAL = 10000;
+		const MAX_INTERVAL = 86400000; // 24 hours
 
 		const clampedMs = Math.max(MIN_INTERVAL, Math.min(MAX_INTERVAL, ms));
 		if (clampedMs !== ms) {
@@ -412,6 +418,35 @@ export const AudioPro = {
 		return (
 			internalStore.getState().configureOptions.progressIntervalMs ??
 			DEFAULT_CONFIG.progressIntervalMs
+		);
+	},
+
+	/**
+	 * Enable or disable progress updates
+	 *
+	 * @param enabled - Whether to enable progress updates (default: true)
+	 */
+	setProgressUpdatesEnabled(enabled: boolean): void {
+		logDebug('AudioPro: setProgressUpdatesEnabled()', enabled);
+		const { setConfigureOptions, configureOptions, trackPlaying } = internalStore.getState();
+		setConfigureOptions({ ...configureOptions, progressUpdatesEnabled: enabled });
+
+		// If a track is currently playing, update the native progress updates enabled state immediately
+		if (trackPlaying) {
+			if (!isValidPlayerStateForOperation('setProgressUpdatesEnabled()')) return;
+			NativeAudioPro.setProgressUpdatesEnabled(enabled);
+		}
+	},
+
+	/**
+	 * Get whether progress updates are enabled
+	 *
+	 * @returns Whether progress updates are currently enabled
+	 */
+	getProgressUpdatesEnabled(): boolean {
+		return (
+			internalStore.getState().configureOptions.progressUpdatesEnabled ??
+			DEFAULT_CONFIG.progressUpdatesEnabled
 		);
 	},
 

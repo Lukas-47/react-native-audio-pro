@@ -92,6 +92,8 @@ export const DEFAULT_CONFIG: AudioProConfigureOptions = {
 	debugIncludesProgress: false,
 	/** Interval in milliseconds for progress events */
 	progressIntervalMs: 1000,
+	/** Whether progress updates are enabled */
+	progressUpdatesEnabled: true,
 	/** Whether to show next/previous controls */
 	showNextPrevControls: true,
 	/** Whether to show skip forward/back controls in notification */

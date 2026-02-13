@@ -60,6 +60,7 @@ class AudioPro: RCTEventEmitter {
 	private var settingDebug: Bool = false
 	private var settingDebugIncludeProgress: Bool = false
 	private var settingProgressInterval: TimeInterval = 1.0
+	private var settingProgressUpdatesEnabled: Bool = true
 	private var settingShowNextPrevControls = true
 	private var settingShowSkipControls = false
 	private var settingLoopAmbient: Bool = true
@@ -222,6 +223,11 @@ class AudioPro: RCTEventEmitter {
 	////////////////////////////////////////////////////////////
 
 	private func startProgressTimer() {
+		guard settingProgressUpdatesEnabled else {
+			log("Progress updates disabled, not starting timer")
+			return
+		}
+		
 		DispatchQueue.main.async {
 			self.timer?.invalidate()
 			self.sendProgressNoticeEvent()
@@ -309,6 +315,12 @@ class AudioPro: RCTEventEmitter {
 			settingProgressInterval = intervalSeconds
 		} else {
 			settingProgressInterval = 1.0
+		}
+		
+		if let progressUpdatesEnabled = options["progressUpdatesEnabled"] as? Bool {
+			settingProgressUpdatesEnabled = progressUpdatesEnabled
+		} else {
+			settingProgressUpdatesEnabled = true
 		}
 
 		currentPlaybackSpeed = speed
@@ -843,7 +855,7 @@ class AudioPro: RCTEventEmitter {
 	@objc(setProgressInterval:)
 	func setProgressInterval(intervalMs: Double) {
 		let MIN_INTERVAL = 100.0
-		let MAX_INTERVAL = 10000.0
+		let MAX_INTERVAL = 86400000.0 // 24 hours
 		let clampedMs = max(MIN_INTERVAL, min(MAX_INTERVAL, intervalMs))
 		
 		if clampedMs != intervalMs {
@@ -859,6 +871,22 @@ class AudioPro: RCTEventEmitter {
 		if wasRunning {
 			stopTimer()
 			// Only restart if player is actually playing
+			if let player = player, player.rate > 0 {
+				startProgressTimer()
+			}
+		}
+	}
+	
+	@objc(setProgressUpdatesEnabled:)
+	func setProgressUpdatesEnabled(_ enabled: Bool) {
+		log("Setting progress updates enabled to", enabled)
+		settingProgressUpdatesEnabled = enabled
+		
+		// If disabled, stop timer immediately
+		if !enabled {
+			stopTimer()
+		} else {
+			// If enabled and player is playing, restart timer
 			if let player = player, player.rate > 0 {
 				startProgressTimer()
 			}

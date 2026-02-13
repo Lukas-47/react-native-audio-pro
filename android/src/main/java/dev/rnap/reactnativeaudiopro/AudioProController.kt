@@ -58,6 +58,7 @@ object AudioProController {
 	private var settingDebug: Boolean = false
 	private var settingDebugIncludesProgress: Boolean = false
 	private var settingProgressIntervalMs: Long = 1000
+	private var settingProgressUpdatesEnabled: Boolean = true
 	var settingAudioContentType: Int = C.AUDIO_CONTENT_TYPE_MUSIC
 	var settingShowNextPrevControls: Boolean = true
 	var settingShowSkipControls: Boolean = false
@@ -159,6 +160,7 @@ object AudioProController {
 		val autoPlay: Boolean,
 		val startTimeMs: Long?,
 		val progressIntervalMs: Long,
+		val progressUpdatesEnabled: Boolean,
 		val showNextPrevControls: Boolean,
 		val showSkipControls: Boolean,
 		val skipIntervalMs: Long,
@@ -182,6 +184,8 @@ object AudioProController {
 		val progressInterval =
 			if (options.hasKey("progressIntervalMs")) options.getDouble("progressIntervalMs")
 				.toLong() else 1000L
+		val progressUpdatesEnabled =
+			if (options.hasKey("progressUpdatesEnabled")) options.getBoolean("progressUpdatesEnabled") else true
 		val showControls =
 			if (options.hasKey("showNextPrevControls")) options.getBoolean("showNextPrevControls") else true
 		val showSkip =
@@ -226,6 +230,7 @@ object AudioProController {
 		activePlaybackSpeed = speed
 		activeVolume = volume
 		settingProgressIntervalMs = progressInterval
+		settingProgressUpdatesEnabled = progressUpdatesEnabled
 		settingShowNextPrevControls = resolvedShowNextPrev
 		settingShowSkipControls = resolvedShowSkip
 		settingSkipIntervalMs = skipIntervalMs
@@ -239,6 +244,7 @@ object AudioProController {
 			autoPlay,
 			startTimeMs,
 			progressInterval,
+			progressUpdatesEnabled,
 			resolvedShowNextPrev,
 			resolvedShowSkip,
 			skipIntervalMs,
@@ -290,6 +296,7 @@ object AudioProController {
 				"autoPlay=${opts.autoPlay} " +
 				"startTimeMs=${opts.startTimeMs} " +
 				"progressIntervalMs=${opts.progressIntervalMs} " +
+				"progressUpdatesEnabled=${opts.progressUpdatesEnabled} " +
 				"showNextPrevControls=${opts.showNextPrevControls} " +
 				"showSkipControls=${opts.showSkipControls} " +
 				"skipIntervalMs=${opts.skipIntervalMs}"
@@ -787,6 +794,11 @@ object AudioProController {
 	}
 
 	private fun startProgressTimer() {
+		if (!settingProgressUpdatesEnabled) {
+			log("Progress updates disabled, not starting timer")
+			return
+		}
+		
 		stopProgressTimer()
 		engineProgressHandler = Handler(Looper.getMainLooper())
 		engineProgressRunnable = object : Runnable {
@@ -992,7 +1004,7 @@ object AudioProController {
 
 	fun setProgressInterval(intervalMs: Long) {
 		val MIN_INTERVAL = 100L
-		val MAX_INTERVAL = 10000L
+		val MAX_INTERVAL = 86400000L // 24 hours
 		val clampedMs = intervalMs.coerceIn(MIN_INTERVAL, MAX_INTERVAL)
 		
 		if (clampedMs != intervalMs) {
@@ -1008,6 +1020,25 @@ object AudioProController {
 			if (wasRunning) {
 				stopProgressTimer()
 				// Only restart if player is actually playing
+				enginerBrowser?.let {
+					if (it.isPlaying) {
+						startProgressTimer()
+					}
+				}
+			}
+		}
+	}
+	
+	fun setProgressUpdatesEnabled(enabled: Boolean) {
+		log("Setting progress updates enabled to", enabled)
+		settingProgressUpdatesEnabled = enabled
+		
+		// If disabled, stop timer immediately
+		if (!enabled) {
+			stopProgressTimer()
+		} else {
+			// If enabled and player is playing, restart timer
+			runOnUiThread {
 				enginerBrowser?.let {
 					if (it.isPlaying) {
 						startProgressTimer()

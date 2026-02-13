@@ -103,6 +103,11 @@ class AudioProModule(private val reactContext: ReactApplicationContext) :
 	}
 
 	@ReactMethod
+	fun setProgressUpdatesEnabled(enabled: Boolean) {
+		AudioProController.setProgressUpdatesEnabled(enabled)
+	}
+
+	@ReactMethod
 	fun clear() {
 		AudioProController.clear()
 	}
